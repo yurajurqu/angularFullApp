@@ -25,5 +25,8 @@ export class PastTrainingsComponent implements OnInit, AfterViewInit {
     this.dataSource.data = this.ts.getPastExercises();
   }
 
+  doFilter(filterValue: string) {
+    this.dataSource.filter = filterValue.trim().toLowerCase();
+  }
 
 }
