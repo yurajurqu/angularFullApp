@@ -13,11 +13,11 @@ export class TrainingService {
     startExerciseSubject = new Subject<Exercise>();
     exercisesChanged = new Subject<Exercise[]>();
 
+    finishedExercisesChanged  = new Subject<Exercise[]>();
  
     availableExercises =[];
 
     private runningExercise: Exercise;
-    private exercises: Exercise[] =[];
 
     fetchAvailableExercises() {
         this.db.collection('availableExercises')
@@ -58,8 +58,10 @@ export class TrainingService {
     getRunningExercise() {
         return { ...this.runningExercise };
     }
-    getPastExercises() {
-        return [...this.exercises];
+    fetchCompletedOrCancelledExercises() {
+        this.db.collection('finishedExercises').valueChanges().subscribe((exercises: Exercise[]) => {
+            this.finishedExercisesChanged.next(exercises);
+        });
     }
     private addDataToDatabase(exercise: Exercise) {
         this.db.collection('finishedExercises').add(exercise);
