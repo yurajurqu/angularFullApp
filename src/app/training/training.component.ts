@@ -1,17 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { MatDialog } from '@angular/material/dialog';
+import { Subscription } from 'rxjs';
+import { TrainingService } from './training.service';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 
 @Component({
   selector: 'app-training',
   templateUrl: './training.component.html',
   styleUrls: ['./training.component.css']
 })
-export class TrainingComponent implements OnInit {
+export class TrainingComponent implements OnInit , OnDestroy{
   ongoingTraining = false;
+  trainingServiceExerciseSubject: Subscription;
 
-  constructor(private dialog: MatDialog) { }
+  constructor(private trainingService: TrainingService) { }
+  
+  ngOnDestroy(): void {
+    this.trainingServiceExerciseSubject.unsubscribe();
+  }
 
   ngOnInit(): void {
+    this.trainingServiceExerciseSubject = this.trainingService.startExerciseSubject.subscribe(
+      exercise => {
+        if (exercise != null) {
+          this.ongoingTraining = true;
+        } else {
+          this.ongoingTraining = false;
+        }
+      }
+    );
   }
 
 }

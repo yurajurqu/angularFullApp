@@ -1,3 +1,4 @@
+import { NgForm } from '@angular/forms';
 import { TrainingService } from './../training.service';
 import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { Exercise } from '../exercise.model';
@@ -9,30 +10,18 @@ import { Exercise } from '../exercise.model';
 })
 export class NewTrainingComponent implements OnInit {
 
+  selected: null;
   @Output() trainingStart = new EventEmitter<void>();
 
   constructor(private trainingService: TrainingService) { }
 
   availableExercises: Exercise[];
-  // foods = [
-  //   {
-  //     value:'crunches', viewValue:'Crunches'
-  //   },
-  //   {
-  //     value:'touch-toes', viewValue:'Touch toes'
-  //   },
-  //   {
-  //     value:'side-lunges', viewValue:'Side lunges'
-  //   },
-  //   {
-  //     value:'burpees', viewValue:'Burpees'
-  //   },
-  // ]
+
   ngOnInit(): void {
     this.availableExercises = this.trainingService.getAvailableExercises();
   }
-  onStartTraining() {
-    this.trainingStart.emit();
+  onStartTraining(form: NgForm) {
+    this.trainingService.startExercise(form.value.exercise);
   }
 
 }

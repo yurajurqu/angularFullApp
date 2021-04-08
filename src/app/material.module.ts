@@ -15,11 +15,12 @@ import {MatTabsModule} from '@angular/material/tabs';
 import {MatCardModule} from '@angular/material/card'; 
 import { MatSelectModule } from '@angular/material/select';
 import {MatProgressSpinnerModule} from '@angular/material/progress-spinner'; 
-import {MatDialogModule} from '@angular/material/dialog'; 
+import { MatDialogModule } from '@angular/material/dialog';
+import {MatTableModule} from '@angular/material/table'; 
 
 const modules = [MatButtonModule, MatIconModule, MatFormFieldModule, MatInputModule, MatDatepickerModule, MatNativeDateModule, MatCheckboxModule, MatSidenavModule,
     MatToolbarModule, MatListModule, MatTabsModule, MatCardModule, MatSelectModule,
-    MatProgressSpinnerModule, MatDialogModule];
+    MatProgressSpinnerModule, MatDialogModule, MatTableModule];
 @NgModule({
     imports: modules,
     exports: modules
