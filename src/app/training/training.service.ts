@@ -45,12 +45,12 @@ export class TrainingService {
     }
 
     completeExercise() {
-        this.exercises.push({...this.runningExercise, date: new Date(), state: 'completed'});
+        this.addDataToDatabase({...this.runningExercise, date: new Date(), state: 'completed'});
         this.runningExercise = null;
         this.startExerciseSubject.next(null);
     }
     cancelExercise(progress: number) {
-        this.exercises.push({...this.runningExercise, date: new Date(), state: 'cancelled', duration: this.runningExercise.duration*(progress/100), calories:this.runningExercise.calories*(progress/100) });
+        this.addDataToDatabase({...this.runningExercise, date: new Date(), state: 'cancelled', duration: this.runningExercise.duration*(progress/100), calories:this.runningExercise.calories*(progress/100) });
         this.runningExercise = null;
         this.startExerciseSubject.next(null);
     }
@@ -60,5 +60,8 @@ export class TrainingService {
     }
     getPastExercises() {
         return [...this.exercises];
+    }
+    private addDataToDatabase(exercise: Exercise) {
+        this.db.collection('finishedExercises').add(exercise);
     }
 }
