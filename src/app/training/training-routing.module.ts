@@ -5,11 +5,11 @@ import { TrainingComponent } from "./training.component";
 
 
 const routes: Routes = [
-    {path:'',component: TrainingComponent, canActivate: [AuthGuard] },
+    {path:'',component: TrainingComponent },
 ]
 @NgModule({
     imports: [RouterModule.forChild(routes)],
     exports: [RouterModule],
-    providers: [AuthGuard]
+    providers: []
 })
 export class TrainingRoutingModule { }

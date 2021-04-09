@@ -5,11 +5,11 @@ import { RouterModule, Routes } from "@angular/router";
 
 const routes: Routes = [
     {path:'',component: WelcomeComponent },
-    { path: 'training', loadChildren: () => import('src/app/training/training.module').then(m => m.TrainingModule) }
+    { path: 'training', loadChildren: () => import('src/app/training/training.module').then(m => m.TrainingModule), canLoad:[AuthGuard] }
 ];
 @NgModule({
     imports: [RouterModule.forRoot(routes)],
     exports: [RouterModule],
-    providers: []
+    providers: [AuthGuard]
 })
 export class AppRoutingModule { }
