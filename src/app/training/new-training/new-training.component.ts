@@ -1,3 +1,4 @@
+import { UIService } from './../../shared/ui.service';
 import { NgForm } from '@angular/forms';
 import { TrainingService } from './../training.service';
 import { Component, EventEmitter, OnInit, Output, OnDestroy } from '@angular/core';
@@ -14,16 +15,24 @@ export class NewTrainingComponent implements OnInit, OnDestroy {
   selected: null;
   @Output() trainingStart = new EventEmitter<void>();
   exerciseSubscription: Subscription;
+  isLoading: boolean = false;
 
-  constructor(private trainingService: TrainingService) { }
+  loadingSubs: Subscription;
+
+  constructor(private trainingService: TrainingService, private uiService: UIService) { }
 
   ngOnDestroy(): void {
     this.exerciseSubscription.unsubscribe();
+    this.loadingSubs.unsubscribe();
   }
 
   availableExercises: Exercise[];
 
   ngOnInit(): void {
+
+    this.loadingSubs = this.uiService.loadingStateChanged.subscribe(loadingState => {
+      this.isLoading = loadingState;
+    });
     
     this.exerciseSubscription = this.trainingService.exercisesChanged.subscribe(exercises => {
       this.availableExercises = exercises;

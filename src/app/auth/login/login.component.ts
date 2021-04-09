@@ -1,5 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Subscription } from 'rxjs';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
+import { UIService } from 'src/app/shared/ui.service';
 import { AuthService } from '../auth.service';
 
 @Component({
@@ -7,16 +9,26 @@ import { AuthService } from '../auth.service';
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit {
+export class LoginComponent implements OnInit, OnDestroy {
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('',[Validators.required,Validators.minLength(6)]),
   });
 
-  constructor(private authService: AuthService) { }
+  isLoading = false;
+
+  private loadingSubs: Subscription;
+
+  constructor(private authService: AuthService, private uiService: UIService) { }
+  ngOnDestroy(): void {
+    this.loadingSubs.unsubscribe();
+  }
 
   ngOnInit(): void {
+    this.loadingSubs = this.uiService.loadingStateChanged.subscribe(isLoadingState => {
+      this.isLoading = isLoadingState;
+    });
   }
   onSubmit() {
     // TODO: Use EventEmitter with form value
