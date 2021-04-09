@@ -5,6 +5,7 @@ import { Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { AuthData } from "./auth-data.model";
 import { User } from "./user.model";
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable()
 export class AuthService {
@@ -12,7 +13,7 @@ export class AuthService {
     private isAuthenticated = false;
     authChange = new Subject<boolean>();
 
-    constructor(private router: Router, private afAuth: AngularFireAuth, private trainingService: TrainingService) {
+    constructor(private router: Router, private afAuth: AngularFireAuth, private trainingService: TrainingService, private snackbar: MatSnackBar) {
     }
     
     initAuthListener() {
@@ -39,7 +40,7 @@ export class AuthService {
             
         })
             .catch(error => {
-                console.log(error);
+                this.snackbar.open(error.message, null, { duration: 3000 });
             })
         ;
     }
@@ -47,7 +48,8 @@ export class AuthService {
         this.afAuth.signInWithEmailAndPassword(authData.email,authData.password).then(result => {
             console.log(result);
         })  .catch(error => {
-                console.log(error);
+            console.log(error);
+            this.snackbar.open(error.message, null, { duration: 3000 });
         })
         ;
     }
