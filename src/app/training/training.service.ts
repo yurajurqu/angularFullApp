@@ -30,7 +30,8 @@ export class TrainingService {
        
         this.fbSubs.push( this.db.collection('availableExercises')
         .snapshotChanges()
-        .map(docArray => {
+            .map(docArray => {
+                // throw new Error();
             return docArray.map(doc => {
                 return {
                     id: doc.payload.doc['id'],
@@ -43,6 +44,10 @@ export class TrainingService {
         .subscribe((exercises:Exercise[]) => {
             this.availableExercises = exercises;
             this.exercisesChanged.next([...this.availableExercises]);
+            this.uiService.loadingStateChanged.next(false);
+        }, error => {
+            this.uiService.showSnackbar('Fetching exercises failed, please try again later',null, 3000);
+            this.exercisesChanged.next(null);
             this.uiService.loadingStateChanged.next(false);
         }));
     }
