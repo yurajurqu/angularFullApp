@@ -1,36 +1,30 @@
-import { Subscription } from 'rxjs';
+import { Store } from '@ngrx/store';
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { UIService } from 'src/app/shared/ui.service';
 import { AuthService } from '../auth.service';
+import * as fromApp from '../../app.reducer';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
-export class LoginComponent implements OnInit, OnDestroy {
+export class LoginComponent implements OnInit {
 
   loginForm = new FormGroup({
     email: new FormControl('', [Validators.required, Validators.email]),
     password: new FormControl('',[Validators.required,Validators.minLength(6)]),
   });
 
-  isLoading = false;
+  isLoading$ : Observable<boolean>;
 
-  private loadingSubs: Subscription;
-
-  constructor(private authService: AuthService, private uiService: UIService) { }
-  ngOnDestroy(): void {
-    if (this.loadingSubs) {
-      this.loadingSubs.unsubscribe();
-    }
-  }
+  constructor(private authService: AuthService, private uiService: UIService, private store: Store<{ui: fromApp.State}>) { }
 
   ngOnInit(): void {
-    this.loadingSubs = this.uiService.loadingStateChanged.subscribe(isLoadingState => {
-      this.isLoading = isLoadingState;
-    });
+    this.isLoading$ = this.store.map(state=>state.ui.isLoading);
   }
   onSubmit() {
     // TODO: Use EventEmitter with form value
