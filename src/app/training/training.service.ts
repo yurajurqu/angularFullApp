@@ -72,7 +72,11 @@ export class TrainingService {
     }
 
     cancelSubscriptions() {
-        this.fbSubs.forEach(sub => { sub.unsubscribe()});
+        this.fbSubs.forEach(sub => {
+            if (sub) {
+                sub.unsubscribe()
+            }
+        });
     }
 
     getRunningExercise() {
