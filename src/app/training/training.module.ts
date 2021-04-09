@@ -1,3 +1,4 @@
+import { TrainingRoutingModule } from './training-routing.module';
 import { SharedModule } from './../shared/shared.module';
 import { NgModule } from "@angular/core";
 import { CurrentTrainingComponent } from "./current-training/current-training.component";
@@ -13,7 +14,8 @@ import { TrainingComponent } from "./training.component";
         PastTrainingsComponent
     ],
     imports: [
-       SharedModule
+        SharedModule,
+        TrainingRoutingModule
     ],
     exports:[]
 })
