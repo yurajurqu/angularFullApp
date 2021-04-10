@@ -5,6 +5,8 @@ import { CurrentTrainingComponent } from "./current-training/current-training.co
 import { NewTrainingComponent } from "./new-training/new-training.component";
 import { PastTrainingsComponent } from "./past-trainings/past-trainings.component";
 import { TrainingComponent } from "./training.component";
+import { StoreModule } from '@ngrx/store';
+import { trainingReducer } from './training.reducer';
 
 @NgModule({
     declarations: [
@@ -15,7 +17,8 @@ import { TrainingComponent } from "./training.component";
     ],
     imports: [
         SharedModule,
-        TrainingRoutingModule
+        TrainingRoutingModule,
+        StoreModule.forFeature('training',trainingReducer)
     ],
     exports:[]
 })

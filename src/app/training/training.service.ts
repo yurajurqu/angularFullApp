@@ -1,3 +1,5 @@
+import { getActiveTraining } from './training.reducer';
+import { SetAvailableTrainings, SetFinishedTrainings, StartTraining, StopTraining } from './training.actions';
 import { UIService } from './../shared/ui.service';
 import { Injectable } from "@angular/core";
 import { AngularFirestore } from "@angular/fire/firestore";
@@ -7,23 +9,23 @@ import  'rxjs/add/operator/map';
 import { Subscription } from "rxjs";
 import { Store } from '@ngrx/store';
 import { State } from '../app.reducer';
+import * as fromTraining from '../training/training.reducer';
 import { StartLoading, StopLoading } from '../shared/ui.actions';
+import { take } from 'rxjs/operators';
 
 @Injectable()
 export class TrainingService {
 
-    constructor(private db: AngularFirestore, private uiService: UIService, private store: Store<State>) {
+    constructor(private db: AngularFirestore, private uiService: UIService, private store: Store<fromTraining.State> ) {
     }
 
     startExerciseSubject = new Subject<Exercise>();
-    exercisesChanged = new Subject<Exercise[]>();
 
 
     private fbSubs: Subscription[] = [];
 
     finishedExercisesChanged  = new Subject<Exercise[]>();
  
-    availableExercises =[];
 
     private runningExercise: Exercise;
 
@@ -45,33 +47,33 @@ export class TrainingService {
             });
         })
         .subscribe((exercises:Exercise[]) => {
-            this.availableExercises = exercises;
-            this.exercisesChanged.next([...this.availableExercises]);
             this.store.dispatch(new StopLoading());
+            this.store.dispatch(new SetAvailableTrainings(exercises));
         }, error => {
             this.uiService.showSnackbar('Fetching exercises failed, please try again later',null, 3000);
-            this.exercisesChanged.next(null);
+            this.store.dispatch(new SetAvailableTrainings([]));
             this.store.dispatch(new StopLoading());
         }));
     }
 
     startExercise(selectedId: string) {
-        this.db.doc('availableExercises/' + selectedId).update({
-            lastSelected: new Date()
-        });
-        this.runningExercise = this.availableExercises.find(ex => ex.id === selectedId);
-        this.startExerciseSubject.next({...this.runningExercise});
+        this.store.dispatch(new StartTraining(selectedId));
     }
 
     completeExercise() {
-        this.addDataToDatabase({...this.runningExercise, date: new Date(), state: 'completed'});
-        this.runningExercise = null;
-        this.startExerciseSubject.next(null);
+        this.store.select(getActiveTraining).pipe(take(1)).subscribe(ex => {
+            this.addDataToDatabase({... ex, date: new Date(), state: 'completed'});
+            this.store.dispatch(new StopTraining());
+        });
+        
     }
     cancelExercise(progress: number) {
-        this.addDataToDatabase({...this.runningExercise, date: new Date(), state: 'cancelled', duration: this.runningExercise.duration*(progress/100), calories:this.runningExercise.calories*(progress/100) });
-        this.runningExercise = null;
-        this.startExerciseSubject.next(null);
+
+        this.store.select(getActiveTraining).pipe(take(1)).subscribe(ex => {
+            
+            this.addDataToDatabase({...ex, date: new Date(), state: 'cancelled', duration: ex.duration*(progress/100), calories:ex.calories*(progress/100) });
+            this.store.dispatch(new StopTraining());
+        });
     }
 
     cancelSubscriptions() {
@@ -82,14 +84,11 @@ export class TrainingService {
         });
     }
 
-    getRunningExercise() {
-        return { ...this.runningExercise };
-    }
     fetchCompletedOrCancelledExercises() {
         this.store.dispatch(new StartLoading());
         this.fbSubs.push(this.db.collection('finishedExercises').valueChanges().subscribe((exercises: Exercise[]) => {
-            this.finishedExercisesChanged.next(exercises);
             this.store.dispatch(new StopLoading());
+            this.store.dispatch(new SetFinishedTrainings(exercises));
         }));
     }
     private addDataToDatabase(exercise: Exercise) {
