@@ -2,7 +2,6 @@ import { TrainingService } from './../training/training.service';
 import { AngularFireAuth } from '@angular/fire/auth';
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { Subject } from "rxjs";
 import { AuthData } from "./auth-data.model";
 import { UIService } from '../shared/ui.service';
 import { Store } from '@ngrx/store';

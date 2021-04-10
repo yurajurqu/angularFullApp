@@ -1,7 +1,7 @@
 import { State, getIsAuth } from './../../app.reducer';
 import { Store } from '@ngrx/store';
-import { Component, EventEmitter, OnDestroy, OnInit, Output } from '@angular/core';
-import { Observable, Subscription } from 'rxjs';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Observable } from 'rxjs';
 import { AuthService } from 'src/app/auth/auth.service';
 
 @Component({

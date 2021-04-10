@@ -19,7 +19,6 @@ export class TrainingService {
     constructor(private db: AngularFirestore, private uiService: UIService, private store: Store<fromTraining.State> ) {
     }
 
-    startExerciseSubject = new Subject<Exercise>();
 
 
     private fbSubs: Subscription[] = [];

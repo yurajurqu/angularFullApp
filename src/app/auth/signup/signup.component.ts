@@ -16,7 +16,6 @@ export class SignupComponent implements OnInit {
 
   maxDate;
   isLoading$: Observable<boolean>;;
-  loadingSubs :  Subscription;
 
   constructor(private AuthService: AuthService, private store: Store<State>) { }
   
